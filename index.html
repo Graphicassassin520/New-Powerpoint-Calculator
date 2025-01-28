@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vacation Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      gap: 20px;
+    }
+
+    .input-section, .result-section {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 1rem;
+    }
+
+    .option-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .option-group input {
+      margin-right: 5px;
+    }
+
+    input[type="number"] {
+      width: calc(100% - 10px);
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .calculate {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .reset {
+      background-color: #ff4d4d;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f5e9;
+      border: 1px solid #4caf50;
+      border-radius: 5px;
+      font-size: 2rem; /* Triple the original size */
+      display: none;
+    }
+
+    .result #total-cost {
+      font-size: 5rem; /* Five times the original size */
+      color: red;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .input-section, .result-section {
+        min-width: 100%;
+      }
+
+      button {
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Vacation Calculator</h1>
+  <div class="container">
+    <!-- Input Section -->
+    <div class="input-section">
+      <label>Number of Nights:</label>
+      <div class="option-group">
+        <input type="radio" name="nights" value="7" id="nights-7"><label for="nights-7">7 Nights</label>
+        <input type="radio" name="nights" value="14" id="nights-14" checked><label for="nights-14">14 Nights</label>
+        <input type="radio" name="nights" value="21" id="nights-21"><label for="nights-21">21 Nights</label>
+        <input type="radio" name="nights" value="30" id="nights-30"><label for="nights-30">30 Nights</label>
+        <input type="radio" name="nights" id="nights-other"><label for="nights-other">Other:</label>
+        <input type="number" id="nights-other-input" placeholder="Enter custom nights" disabled>
+      </div>
+
+      <label>Nightly Hotel Cost:</label>
+      <div class="option-group">
+        <input type="radio" name="cost" value="75" id="cost-75"><label for="cost-75">$75 / Night</label>
+        <input type="radio" name="cost" value="100" id="cost-100" checked><label for="cost-100">$100 / Night</label>
+        <input type="radio" name="cost" value="150" id="cost-150"><label for="cost-150">$150 / Night</label>
+        <input type="radio" name="cost" value="200" id="cost-200"><label for="cost-200">$200 / Night</label>
+        <input type="radio" name="cost" value="250" id="cost-250"><label for="cost-250">$250 / Night</label>
+        <input type="radio" name="cost" value="300" id="cost-300"><label for="cost-300">$300 / Night</label>
+        <input type="radio" name="cost" id="cost-other"><label for="cost-other">Other:</label>
+        <input type="number" id="cost-other-input" placeholder="Enter custom cost" disabled>
+      </div>
+
+      <label>Years Planning to Vacation:</label>
+      <div class="option-group">
+        <input type="radio" name="years" value="5" id="years-5"><label for="years-5">5 Years</label>
+        <input type="radio" name="years" value="10" id="years-10" checked><label for="years-10">10 Years</label>
+        <input type="radio" name="years" value="15" id="years-15"><label for="years-15">15 Years</label>
+        <input type="radio" name="years" value="20" id="years-20"><label for="years-20">20 Years</label>
+        <input type="radio" name="years" value="25" id="years-25"><label for="years-25">25 Years</label>
+        <input type="radio" name="years" value="30" id="years-30"><label for="years-30">30 Years</label>
+        <input type="radio" name="years" id="years-other"><label for="years-other">Other:</label>
+        <input type="number" id="years-other-input" placeholder="Enter custom years" disabled>
+      </div>
+
+      <label>Inflation Rate (%):</label>
+      <div class="option-group">
+        <input type="radio" name="inflation" value="0" id="inflation-0"><label for="inflation-0">0%</label>
+        <input type="radio" name="inflation" value="1" id="inflation-1"><label for="inflation-1">1%</label>
+        <input type="radio" name="inflation" value="2" id="inflation-2"><label for="inflation-2">2%</label>
+        <input type="radio" name="inflation" value="3" id="inflation-3" checked><label for="inflation-3">3%</label>
+        <input type="radio" name="inflation" value="4" id="inflation-4"><label for="inflation-4">4%</label>
+        <input type="radio" name="inflation" value="5" id="inflation-5"><label for="inflation-5">5%</label>
+        <input type="radio" name="inflation" id="inflation-other"><label for="inflation-other">Other:</label>
+        <input type="number" id="inflation-other-input" placeholder="Enter custom rate" disabled>
+      </div>
+
+      <button class="calculate" onclick="calculate()">Calculate</button>
+      <button class="reset" onclick="reset()">Reset</button>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-section">
+      <div class="result" id="result">
+        <p><strong>If you vacation <span id="summary-nights">14</span> nights per year and spend $<span id="summary-cost">100</span> per night on your room, and you do this for <span id="summary-years">10</span> years at an <span id="summary-inflation">3%</span> rate of inflation, you will spend $<span id="total-cost">0.00</span>.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const nights = document.querySelector('input[name="nights"]:checked').value || document.getElementById('nights-other-input').value;
+      const cost = document.querySelector('input[name="cost"]:checked').value || document.getElementById('cost-other-input').value;
+      const years = document.querySelector('input[name="years"]:checked').value || document.getElementById('years-other-input').value;
+      const inflation = document.querySelector('input[name="inflation"]:checked').value || document.getElementById('inflation-other-input').value;
+
+      if (nights && cost && years && inflation !== undefined) {
+        let total = nights * cost * years;
+        if (inflation > 0) {
+          total *= Math.pow(1 + inflation / 100, years);
+        }
+
+        document.getElementById('summary-nights').textContent = nights;
+        document.getElementById('summary-cost').textContent = cost;
+        document.getElementById('summary-years').textContent = years;
+        document.getElementById('summary-inflation').textContent = inflation + '%';
+
+        document.getElementById('total-cost').textContent = total.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+
+        document.getElementById('result').style.display = 'block';
+      } else {
+        alert('Please select or enter valid values for all fields.');
+      }
+    }
+
+    function reset() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+      document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+      document.getElementById('result').style.display = 'none';
+    }
+
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.id.endsWith('-other')) {
+          document.getElementById(`${e.target.name}-other-input`).disabled = false;
+        } else {
+          document.getElementById(`${e.target.name}-other-input`).disabled = true;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
