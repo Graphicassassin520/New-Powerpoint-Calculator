@@ -8,27 +8,36 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       box-sizing: border-box;
       background-color: #f4f4f4;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .container {
+    .screen {
+      width: 100%;
+      height: 100%;
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      max-width: 1200px;
-      margin: auto;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      gap: 20px;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
     }
 
-    .input-section, .result-section {
-      flex: 1;
-      min-width: 300px;
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .input-section {
+      width: 90%;
+      max-width: 600px;
     }
 
     h1 {
@@ -55,7 +64,7 @@
     }
 
     input[type="number"] {
-      width: calc(100% - 10px);
+      width: 100%;
       padding: 10px;
       font-size: 1rem;
       border: 1px solid #ccc;
@@ -68,6 +77,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-top: 20px;
     }
 
     .calculate {
@@ -75,48 +85,37 @@
       color: white;
     }
 
-    .reset {
-      background-color: #ff4d4d;
-      color: white;
-      margin-left: 10px;
+    .result-screen {
+      text-align: center;
     }
 
     .result {
+      font-size: 1.5rem;
       margin-top: 20px;
-      padding: 15px;
-      background: #e8f5e9;
-      border: 1px solid #4caf50;
-      border-radius: 5px;
-      font-size: 2rem; /* Triple the original size */
-      display: none;
+    }
+
+    .result p {
+      margin: 10px 0;
     }
 
     .result #total-cost {
-      font-size: 5rem; /* Five times the original size */
+      font-size: 3rem;
       color: red;
       font-weight: bold;
     }
 
     @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .input-section, .result-section {
-        min-width: 100%;
-      }
-
-      button {
-        margin: 10px 0;
+      .input-section {
+        width: 100%;
+        padding: 0 20px;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Vacation Calculator</h1>
-  <div class="container">
-    <!-- Input Section -->
+  <div id="screen1" class="screen">
     <div class="input-section">
+      <h1>Vacation Calculator</h1>
       <label>Number of Nights:</label>
       <div class="option-group">
         <input type="radio" name="nights" value="7" id="nights-7"><label for="nights-7">7 Nights</label>
@@ -163,15 +162,19 @@
         <input type="number" id="inflation-other-input" placeholder="Enter custom rate" disabled>
       </div>
 
-      <button class="calculate" onclick="calculate()">Calculate</button>
-      <button class="reset" onclick="reset()">Reset</button>
+      <button class="calculate" onclick="transitionToResults()">Calculate</button>
     </div>
+  </div>
 
-    <!-- Result Section -->
-    <div class="result-section">
-      <div class="result" id="result">
-        <p><strong>If you vacation <span id="summary-nights">14</span> nights per year and spend $<span id="summary-cost">100</span> per night on your room, and you do this for <span id="summary-years">10</span> years at an <span id="summary-inflation">3%</span> rate of inflation, you will spend $<span id="total-cost">0.00</span>.</strong></p>
+  <div id="screen2" class="screen hidden">
+    <div class="result-screen">
+      <h1>Calculation Results</h1>
+      <div class="result">
+        <p>If you vacation <span id="summary-nights">14</span> nights per year and spend $<span id="summary-cost">100</span> per night on your room,</p>
+        <p>and you do this for <span id="summary-years">10</span> years at an <span id="summary-inflation">3%</span> rate of inflation,</p>
+        <p>you will spend $<span id="total-cost">0.00</span>.</p>
       </div>
+      <button onclick="restart()">Restart</button>
     </div>
   </div>
 
@@ -182,32 +185,32 @@
       const years = document.querySelector('input[name="years"]:checked').value || document.getElementById('years-other-input').value;
       const inflation = document.querySelector('input[name="inflation"]:checked').value || document.getElementById('inflation-other-input').value;
 
-      if (nights && cost && years && inflation !== undefined) {
-        let total = nights * cost * years;
-        if (inflation > 0) {
-          total *= Math.pow(1 + inflation / 100, years);
-        }
-
-        document.getElementById('summary-nights').textContent = nights;
-        document.getElementById('summary-cost').textContent = cost;
-        document.getElementById('summary-years').textContent = years;
-        document.getElementById('summary-inflation').textContent = inflation + '%';
-
-        document.getElementById('total-cost').textContent = total.toLocaleString('en-US', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-
-        document.getElementById('result').style.display = 'block';
-      } else {
-        alert('Please select or enter valid values for all fields.');
+      let total = nights * cost * years;
+      if (inflation > 0) {
+        total *= Math.pow(1 + inflation / 100, years);
       }
+
+      document.getElementById('summary-nights').textContent = nights;
+      document.getElementById('summary-cost').textContent = cost;
+      document.getElementById('summary-years').textContent = years;
+      document.getElementById('summary-inflation').textContent = inflation + '%';
+      document.getElementById('total-cost').textContent = total.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
     }
 
-    function reset() {
+    function transitionToResults() {
+      calculate();
+      document.getElementById('screen1').classList.add('hidden');
+      document.getElementById('screen2').classList.remove('hidden');
+    }
+
+    function restart() {
+      document.getElementById('screen2').classList.add('hidden');
+      document.getElementById('screen1').classList.remove('hidden');
       document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
       document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
-      document.getElementById('result').style.display = 'none';
     }
 
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
